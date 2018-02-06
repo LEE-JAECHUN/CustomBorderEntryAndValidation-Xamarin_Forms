@@ -1,6 +1,7 @@
 ﻿/*
  * 참조 : https://developer.xamarin.com/guides/xamarin-forms/enterprise-application-patterns/
  */
+using System.Threading.Tasks;
 using System.Windows.Input;
 using EntryEffectAndValidation.Core.ViewModels.Base;
 using EntryEffectAndValidation.Validations;
@@ -60,6 +61,8 @@ namespace EntryEffectAndValidation.Core.ViewModels
                                                                                     async () =>
                                                                                     {
                                                                                         IsBusy = true;
+                                                                                        
+                                                                                        await Task.Delay(1500); //실제 운영 코드에서는 사용 하지 마세요
 
                                                                                         bool isValid = Validate();
                                                                                         if(isValid)
