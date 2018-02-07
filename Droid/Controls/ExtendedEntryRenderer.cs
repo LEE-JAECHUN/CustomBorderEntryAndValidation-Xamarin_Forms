@@ -15,8 +15,6 @@ namespace EntryEffectAndValidation.Droid.Controls
 {
     public class ExtendedEntryRenderer : EntryRenderer
     {
-        private Lazy<GradientDrawable> _gradientBackground = new Lazy<GradientDrawable>();
-
         public ExtendedEntry ExtendedEntryElement => Element as ExtendedEntry;
 
         public ExtendedEntryRenderer(Context context) : base(context)
@@ -32,7 +30,7 @@ namespace EntryEffectAndValidation.Droid.Controls
             if (e.NewElement != null)
             {
                 Control.InputType |= Android.Text.InputTypes.TextFlagNoSuggestions;
-                ResetControl();
+                InitControl();
                 UpdateControl();
             }
         }
@@ -41,7 +39,8 @@ namespace EntryEffectAndValidation.Droid.Controls
         {
             base.OnElementPropertyChanged(sender, e);
 
-            if (e.PropertyName.Equals(ExtendedEntry.BorderWidthProperty.PropertyName) 
+            if (e.PropertyName.Equals(ExtendedEntry.BorderWidthProperty.PropertyName)
+                || (e.PropertyName.Equals(nameof(Element.BackgroundColor)))
                 || (e.PropertyName.Equals(nameof(ExtendedEntry.BorderColorToApply))))
             {
                 UpdateControl();
@@ -50,12 +49,8 @@ namespace EntryEffectAndValidation.Droid.Controls
         #endregion
 
         #region Private Method Area
-        private void ResetControl()
+        private void InitControl()
         {
-            var background = _gradientBackground.Value;
-            background.SetShape(ShapeType.Rectangle);
-            Control.SetBackground(background);
-
             // Set padding for the internal text from border
             Control.SetPadding(
                 (int)DpToPixels(this.Context, Convert.ToSingle(12)),
@@ -66,9 +61,11 @@ namespace EntryEffectAndValidation.Droid.Controls
 
         private void UpdateControl()
         {
-            var background = _gradientBackground.Value;
-            background.SetStroke(ExtendedEntryElement.BorderWidth, ExtendedEntryElement.BorderColorToApply.ToAndroid());
-            Control.SetBackground(background);
+            var drawable = new GradientDrawable();
+            drawable.SetShape(ShapeType.Rectangle);
+            drawable.SetColor(ExtendedEntryElement.BackgroundColor.ToAndroid());
+            drawable.SetStroke(ExtendedEntryElement.BorderWidth, ExtendedEntryElement.BorderColorToApply.ToAndroid());
+            Control.SetBackground(drawable);
         }
 
         public static float DpToPixels(Context context, float valueInDp)
